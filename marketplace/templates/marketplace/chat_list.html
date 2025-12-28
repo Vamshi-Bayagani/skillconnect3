@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chats · SkillConnect</title>
+  <style>
+    body {
+      min-height: 100vh;
+  background: linear-gradient(135deg, #020617, #0ea5e9, #6366f1, #22c55e, #f97316);
+  background-size: 350% 350%;
+  animation: bgMove 18s ease infinite;
+  color: #e5e7eb;
+  justify-content: center;
+  margin:0;
+  padding: 30px;
+  font-family: Poppins;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+    .chat-card {
+      background: #0f172a;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .chat-card:hover {
+      background: #1e293b;
+      transform: translateY(-2px);
+    }
+    .name {
+      font-weight: 600;
+    }
+    .job {
+      font-size: 12px;
+      opacity: .7;
+    }
+  </style>
+</head>
+<body>
+
+<h2>💬 Your Chats</h2>
+
+{% for c in conversations %}
+  <a href="{% url 'chat_room' c.id %}" style="text-decoration:none;color:inherit">
+    <div class="chat-card">
+      <div>
+        <div class="name">
+          {% if request.user == c.recruiter %}
+            {{ c.freelancer.first_name|default:"Freelancer" }}
+          {% else %}
+            {{ c.recruiter.first_name|default:"Recruiter" }}
+          {% endif %}
+        </div>
+        <div class="job">{{ c.job.title }}</div>
+      </div>
+      <div>➡️</div>
+    </div>
+  </a>
+{% empty %}
+  <p>No chats yet.</p>
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chat · SkillConnect</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Poppins,system-ui;
+  background:linear-gradient(135deg,#020617,#0f172a,#1e293b);
+  color:#e5e7eb;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* =====================
+   CHAT CONTAINER
+===================== */
+.chat-wrapper{
+  width:100%;
+  max-width:780px;
+  height:85vh;
+  background:rgba(15,23,42,0.96);
+  border-radius:20px;
+  box-shadow:0 30px 80px rgba(0,0,0,.7);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  animation:fadeIn .6s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* =====================
+   HEADER
+===================== */
+.chat-header{
+  padding:16px 18px;
+  background:linear-gradient(90deg,#22c55e,#4ade80);
+  color:#022c22;
+  font-weight:600;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.chat-header small{
+  font-size:12px;
+  opacity:.8;
+}
+
+/* =====================
+   MESSAGES
+===================== */
+.chat-body{
+  flex:1;
+  padding:18px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  scroll-behavior:smooth;
+}
+
+/* message bubble */
+.msg{
+  max-width:72%;
+  padding:12px 14px;
+  border-radius:16px;
+  position:relative;
+  animation:slideUp .3s ease;
+  word-wrap:break-word;
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* sender */
+.me{
+  align-self:flex-end;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#022c22;
+  border-bottom-right-radius:4px;
+}
+
+.them{
+  align-self:flex-start;
+  background:#334155;
+  border-bottom-left-radius:4px;
+}
+
+/* timestamp */
+.msg-time{
+  font-size:10px;
+  opacity:.7;
+  margin-top:4px;
+  text-align:right;
+}
+
+/* =====================
+   INPUT AREA
+===================== */
+.chat-input{
+  padding:14px;
+  background:#020617;
+  border-top:1px solid rgba(148,163,184,.15);
+}
+
+.chat-input form{
+  display:flex;
+  gap:10px;
+}
+
+.chat-input input{
+  flex:1;
+  padding:12px 14px;
+  border-radius:999px;
+  border:none;
+  outline:none;
+  font-size:14px;
+  background:#0f172a;
+  color:#e5e7eb;
+}
+
+.chat-input input:focus{
+  box-shadow:0 0 0 2px rgba(34,197,94,.6);
+}
+
+.chat-input button{
+  padding:0 18px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(135deg,#22c55e,#4ade80);
+  font-weight:600;
+  color:#022c22;
+  transition:.2s;
+}
+
+.chat-input button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 20px rgba(34,197,94,.8);
+}
+
+/* =====================
+   SCROLLBAR
+===================== */
+.chat-body::-webkit-scrollbar{
+  width:6px;
+}
+.chat-body::-webkit-scrollbar-thumb{
+  background:#334155;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-wrapper">
+
+  <!-- HEADER -->
+  <div class="chat-header">
+    <div>
+      💬 {{ conversation.job.title }}
+      <br>
+      <small>
+        {% if request.user == conversation.recruiter %}
+          Chatting with {{ conversation.freelancer.first_name|default:"Freelancer" }}
+        {% else %}
+          Chatting with {{ conversation.recruiter.first_name|default:"Recruiter" }}
+        {% endif %}
+      </small>
+    </div>
+    <small>SkillConnect</small>
+  </div>
+
+  <!-- CHAT BODY -->
+  <div class="chat-body" id="chatBody">
+    {% for msg in messages %}
+      <div class="msg {% if msg.sender == request.user %}me{% else %}them{% endif %}">
+        {{ msg.text }}
+        {% if msg.file %}
+        <div style="margin-top:6px;">
+          <a href="{{ msg.file.url }}" target="_blank" class="file-link">
+            📎 {{ msg.file.name|cut:"chat_files/" }}
+          </a>
+        </div>
+          {% endif %}
+
+        
+
+        <div class="msg-time">
+          {{ msg.timestamp|timesince }} ago
+          {% if msg.sender == request.user %}
+          {% if msg.is_read %}
+          ✔✔
+          {% else %}
+          ✔
+          {% endif %}
+        {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <p style="opacity:.6">No messages yet. Say hello 👋</p>
+    {% endfor %}
+  </div>
+
+  <!-- INPUT -->
+  <div class="chat-input" >
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="text" name="text" placeholder="Type your message..." required autocomplete="off">
+      <label class="file-btn">
+        📎
+        <input type="file" name="file" hidden>
+        </label>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Auto scroll to bottom
+  const chatBody = document.getElementById("chatBody");
+  chatBody.scrollTop = chatBody.scrollHeight;
+</script>
+
+</body>
+</html>

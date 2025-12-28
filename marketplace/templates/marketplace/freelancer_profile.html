@@ -1,0 +1,458 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ freelancer.get_full_name|default:freelancer.username }} · Freelancer Profile</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --accent1:#22c55e;
+  --accent2:#3b82f6;
+  --accent3:#a855f7;
+  --muted:#94a3b8;
+}
+*{box-sizing:border-box}
+body{
+  min-height: 100vh;
+  background: linear-gradient(135deg, #020617, #0ea5e9, #6366f1, #22c55e, #f97316);
+  background-size: 350% 350%;
+  animation: bgMove 18s ease infinite;
+  color: #e5e7eb;
+  justify-content: center;
+  margin:0;
+  display:flex;
+  font-family:Poppins,system-ui;
+  padding: 24px;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.wrap{max-width:1100px;margin:auto}
+
+/* layout */
+.grid{
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:22px;
+}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+.card{
+  background:linear-gradient(180deg,rgba(7, 24, 67, 0.658),rgba(4, 11, 26, 0.937));
+  border-radius:16px;
+  padding:18px;
+  border:1px solid rgba(255,255,255,.08);
+  animation:float 6s ease-in-out infinite;
+}
+@keyframes float{50%{transform:translateY(-6px)}}
+
+/* avatar */
+.avatar-wrap{
+  width:120px;height:120px;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
+}
+.avatar{width:100%;height:100%;object-fit:cover}
+
+/* chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.chip{
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+}
+
+/* buttons */
+.btn{
+  padding:8px 14px;
+  border-radius:999px;
+  font-weight:700;
+  border:0;
+  cursor:pointer;
+}
+.btn-primary{
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:#021;
+}
+.btn-outline{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.2);
+  color:#e5e7eb;
+}
+
+/* sections */
+.section-title{
+  font-weight:800;
+  margin-bottom:6px;
+}
+.muted{color:var(--muted);font-size:14px}
+
+        /* ===============================
+   LEFT SIDEBAR
+================================ */
+.sidebar{
+  position:fixed;
+  left:18px;
+  top:18px;
+  bottom:18px;
+  width:190px;
+  background:rgba(15,23,42,0.95);
+  border-radius:22px;
+  padding:18px 14px;
+  box-shadow:0 20px 50px rgba(15,23,42,.9);
+  display:flex;
+  flex-direction:column;
+  z-index:100;
+}
+
+.sidebar-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+  margin-bottom:22px;
+}
+
+.sb-logo{
+  width:36px;
+  height:36px;
+  border-radius:14px;
+  background:conic-gradient(from 180deg,#22c55e,#3b82f6,#a855f7,#22c55e);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#020617;
+}
+
+.sidebar-nav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.sb-link{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  text-decoration:none;
+  font-size:13px;
+  color:#e5e7eb;
+  background:rgba(15,23,42,.6);
+  border:1px solid rgba(148,163,184,.25);
+  transition:.25s ease;
+}
+
+.sb-link:hover{
+  transform:translateX(6px);
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#022c22;
+  box-shadow:0 10px 26px rgba(34,197,94,.8);
+}
+
+/* PUSH MAIN CONTENT RIGHT */
+.layout{
+  margin-left:250px;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{
+    position:relative;
+    width:100%;
+    height:auto;
+    flex-direction:row;
+    overflow-x:auto;
+  }
+  .sidebar-nav{
+    flex-direction:row;
+  }
+  .layout{
+    margin-left:0;
+    margin-top:120px;
+  }
+}
+.badge{
+  margin-left:auto;
+  background:#ef4444;
+  color:white;
+  font-size:10px;
+  font-weight:700;
+  padding:2px 7px;
+  border-radius:999px;
+  box-shadow:0 0 10px rgba(239,68,68,.8);
+}
+
+.sidebar-link.logout-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: #fca5a5;
+  font-weight: 600;
+}
+
+.sidebar-link.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fecaca;
+}
+
+
+</style>
+</head>
+
+<body>
+
+   <!-- LEFT SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sb-logo">S</div>
+    <span>SkillConnect</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="{% url 'freelancer_dashboard' %}" class="sb-link">
+      👤 <span>Dashboard</span>
+    </a>
+
+    <a href="{% url 'chat_list' %}" class="sb-link">
+      💬 <span>Chat</span>
+    </a>
+
+    <a href="{% url 'job_list' %}" class="sb-link">
+      📋 <span>Job List</span>
+    </a>
+
+    <a href="{% url 'notifications' %}" class="sb-link">
+      🔔 <span>Notifications</span>
+      {% if notifications_count > 0 %}
+      <span class="badge">{{ notifications_count }}</span>
+      {% endif %}
+    </a>
+
+    <a href="{% url 'feedback' %}" class="sb-link">
+      ⭐ <span>Feedback</span>
+    </a>
+
+    <a href="{% url 'about_us' %}" class="sb-link">
+      ℹ️ <span>About Us</span>
+    </a>
+
+    <form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit" class="sidebar-link logout-btn" onclick="return confirm('Are you sure you want to logout?')">
+    🚪 Logout
+  </button>
+</form>
+  </nav>
+</aside>
+
+
+
+<div class="wrap">
+
+<div class="grid">
+
+
+<!-- LEFT PROFILE -->
+<aside class="card">
+  <div style="display:flex;gap:14px;align-items:center">
+    <div class="avatar-wrap">
+      {% if freelancer.profile.profile_image %}
+        <img src="{{ freelancer.profile.profile_image.url }}" class="avatar">
+      {% else %}
+        <img src="{% static 'marketplace/default-avatar.png' %}" class="avatar">
+      {% endif %}
+    </div>
+
+    <div>
+      <h2 style="margin:0">{{ freelancer.get_full_name|default:freelancer.username }}</h2>
+      <div class="muted">Freelancer · {{ freelancer.profile.city|default:"Remote" }}</div>
+    </div>
+  </div>
+
+  <p class="muted" style="margin-top:12px">
+    {{ freelancer.profile.bio|default:"Passionate freelancer building quality digital solutions." }}
+  </p>
+
+  <div style="margin-top:12px">
+    <button class="btn btn-primary">Hire Me</button>
+    
+    <!-- Freelancer Edit Profile Modal -->
+<div class="modal" id="editFreelancerModal" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <h3 style="margin:0 0 8px">Edit Freelancer Profile</h3>
+
+    <form method="post"
+          action="{% url 'freelancer_profile_edit' freelancer.pk %}"
+          enctype="multipart/form-data">
+
+      {% csrf_token %}
+
+      <!-- Profile Picture -->
+      <label style="font-size:13px;color:var(--muted)">Profile picture</label>
+      <input class="input" type="file" name="profile_image" accept="image/*" />
+
+      <!-- Resume test -->
+      <label style="font-size:13px;color:var(--muted);margin-top:8px">
+  Resume (PDF only)
+</label>
+
+<input class="input"
+       type="file"
+       name="resume"
+       accept="application/pdf" />
+
+{% if freelancer.profile.resume %}
+  <small style="color:#60a5fa">
+    Current resume:
+    <a href="{{ freelancer.profile.resume.url }}" target="_blank">
+      View PDF
+    </a>
+  </small>
+{% endif %}
+
+
+      <!-- Education -->
+      <label style="font-size:13px;color:var(--muted);margin-top:8px">Education</label>
+      <input class="input"
+             type="text"
+             name="education"
+             placeholder="e.g. B.Tech in Computer Science"
+             value="{{ freelancer.profile.education|default_if_none:'' }}" />
+
+      <!-- Experience -->
+      <label style="font-size:13px;color:var(--muted);margin-top:8px">Experience</label>
+      <input class="input"
+             type="text"
+             name="experience"
+             placeholder="e.g. Fresher / 2 Years"
+             value="{{ freelancer.profile.experience|default_if_none:'' }}" />
+
+      <!-- Tech Stack -->
+      <label style="font-size:13px;color:var(--muted);margin-top:8px">
+        Tech Stack <small>(comma separated)</small>
+      </label>
+      <input class="input"
+             type="text"
+             name="tech_stack"
+             placeholder="Python, Django, React"
+             value="{{ freelancer.profile.tech_stack|default_if_none:'' }}" />
+
+      <!-- Skills -->
+      <label style="font-size:13px;color:var(--muted);margin-top:8px">
+        Skills <small>(comma separated)</small>
+      </label>
+      <input class="input"
+             type="text"
+             name="skills"
+             placeholder="Problem Solving, Communication"
+             value="{{ freelancer.profile.skills|default_if_none:'' }}" />
+
+      <!-- Bio -->
+      <label style="font-size:13px;color:var(--muted);margin-top:8px">Bio</label>
+      <textarea class="input"
+                name="bio"
+                rows="3"
+                placeholder="Tell clients about yourself">{{ freelancer.profile.bio|default_if_none:'' }}</textarea>
+
+      <!-- Buttons -->
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <button type="button" class="btn btn-outline" id="cancelFreelancerEdit">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+    <button class="btn btn-outline">Message</button>
+  </div>
+</aside>
+
+<!-- RIGHT DETAILS -->
+<main style="display:flex;flex-direction:column;gap:18px">
+
+<!-- Education -->
+<div class="card">
+  <div class="section-title">🎓 Education</div>
+  <div class="muted">
+    {{ freelancer.profile.education|default:"Not added yet" }}
+  </div>
+</div>
+
+<!-- Experience -->
+<div class="card">
+  <div class="section-title">💼 Experience</div>
+  <div class="muted">
+    {{ freelancer.profile.experience|default:"Fresher / Open to opportunities" }}
+  </div>
+</div>
+
+<!-- Tech Stack -->
+<div class="card">
+  <div class="section-title">🛠 Tech Stack</div>
+  <div class="chips">
+    {% if tech_stack_list %}
+      {% for tech in tech_stack_list %}
+        <div class="chip">{{ tech }}</div>
+      {% endfor %}
+    {% else %}
+      <div class="chip">Python</div>
+      <div class="chip">Django</div>
+      <div class="chip">HTML/CSS</div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Skills -->
+<div class="card">
+  <div class="section-title">⭐ Skills</div>
+  <div class="chips">
+    {% if skills_list %}
+      {% for skill in skills_list %}
+        <div class="chip">{{ skill }}</div>
+      {% endfor %}
+    {% else %}
+      <div class="chip">Problem Solving</div>
+      <div class="chip">Communication</div>
+    {% endif %}
+  </div>
+</div>
+
+{% if freelancer.profile.resume %}
+  <div class="card">
+    <div class="section-title">📄 Resume</div>
+
+    <a href="{{ freelancer.profile.resume.url }}"
+       target="_blank"
+       class="btn btn-primary"
+       style="margin-top:8px">
+      View Resume (PDF)
+    </a>
+  </div>
+{% endif %}
+
+
+</main>
+
+</div>
+</div>
+</body>
+</html>

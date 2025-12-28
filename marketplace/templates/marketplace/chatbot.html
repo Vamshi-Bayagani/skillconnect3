@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SkillConnect Chatbot</title>
+
+<style>
+body {
+  background:#020617;
+  font-family:Poppins;
+  color:#e5e7eb;
+}
+
+.chatbox {
+  max-width:420px;
+  margin:40px auto;
+  background:#0f172a;
+  border-radius:16px;
+  padding:16px;
+}
+
+.msg {
+  margin:8px 0;
+  padding:8px 12px;
+  border-radius:10px;
+  max-width:80%;
+}
+
+.bot {
+  background:#1e293b;
+  color:#22c55e;
+}
+
+.user {
+  background:#1e40af;
+  color:#e5e7eb;
+  margin-left:auto;
+  text-align:right;
+}
+
+input {
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+  border:none;
+  outline:none;
+}
+
+button {
+  margin-top:8px;
+  padding:8px 14px;
+  border-radius:10px;
+  background:#22c55e;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chatbox">
+  <div id="chat">
+    <div class="msg bot">🤖 Hi! I’m SkillConnect Assistant</div>
+  </div>
+
+  <input type="text" id="msg" placeholder="Ask something..." />
+  <button onclick="send()">Send</button>
+</div>
+
+<script>
+function getBotReply(message) {
+  const msg = message.toLowerCase();
+
+  /* =====================
+     GREETINGS
+  ====================== */
+  if (["hi","hello","hey","hii","good morning","good evening"].some(w => msg.includes(w))) {
+    return "👋 Hi! Welcome to SkillConnect. How can I help you today?";
+  }
+
+  /* =====================
+     JOB SEARCH
+  ====================== */
+  if (msg.includes("job") || msg.includes("work") || msg.includes("project")) {
+    return "💼 You can browse available jobs from the Jobs section. Use filters to find the best match.";
+  }
+
+  /* =====================
+     APPLY LOGIC
+  ====================== */
+  if (msg.includes("apply") || msg.includes("proposal")) {
+    return "📝 To apply: Open a job → Click Apply → Fill proposal → Submit.";
+  }
+
+  if (msg.includes("cannot apply") || msg.includes("not able to apply")) {
+    return "⚠️ You must be logged in as a freelancer and the job must be open.";
+  }
+
+  /* =====================
+     PROFILE
+  ====================== */
+  if (msg.includes("profile") || msg.includes("edit profile")) {
+    return "👤 You can edit your profile, skills, resume, and bio from the dashboard.";
+  }
+
+  /* =====================
+     RESUME
+  ====================== */
+  if (msg.includes("resume") || msg.includes("cv")) {
+    return "📄 Freelancers can upload resumes (PDF) from profile settings.";
+  }
+
+  /* =====================
+     CHAT FEATURE
+  ====================== */
+  if (msg.includes("chat") || msg.includes("message")) {
+    return "💬 Chat is enabled after your proposal is accepted by the recruiter.";
+  }
+
+  if (msg.includes("unread") || msg.includes("message not seen")) {
+    return "✔✔ Messages show delivery & seen status in chat.";
+  }
+
+  /* =====================
+     RECRUITER LOGIC
+  ====================== */
+  if (msg.includes("post job") || msg.includes("create job")) {
+    return "📢 Recruiters can post jobs from the Recruiter Dashboard.";
+  }
+
+  if (msg.includes("accept") || msg.includes("reject")) {
+    return "✅ Recruiters can accept or reject proposals from Job Details page.";
+  }
+
+  /* =====================
+     NOTIFICATIONS
+  ====================== */
+  if (msg.includes("notification")) {
+    return "🔔 Notifications alert you for new proposals, messages, and job updates.";
+  }
+
+  /* =====================
+     LOGIN / LOGOUT
+  ====================== */
+  if (msg.includes("login")) {
+    return "🔐 Login using your registered email and password.";
+  }
+
+  if (msg.includes("logout")) {
+    return "🚪 You can logout safely from the sidebar menu.";
+  }
+
+  /* =====================
+     FEEDBACK
+  ====================== */
+  if (msg.includes("feedback") || msg.includes("review")) {
+    return "⭐ You can submit feedback from the Feedback section. We value your opinion!";
+  }
+
+  /* =====================
+     HELP COMMAND
+  ====================== */
+  if (msg === "help") {
+    return (
+      "🤖 I can help with:\n" +
+      "- jobs\n- apply\n- profile\n- resume\n- chat\n- notifications\n- feedback"
+    );
+  }
+
+  /* =====================
+     DEFAULT FALLBACK
+  ====================== */
+  return "❓ I didn’t understand that. Type **help** to see what I can do.";
+}
+</script>
+
+
+
+
+</body>
+</html>
+

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Feedback · SkillConnect</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  min-height: 100vh;
+  background: linear-gradient(135deg, #020617, #0ea5e9, #6366f1, #22c55e, #f97316);
+  background-size: 350% 350%;
+  animation: bgMove 18s ease infinite;
+  color: #e5e7eb;
+  justify-content: center;
+  margin:0;
+  display:flex;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =====================
+   CARD
+===================== */
+.card{
+  width:100%;
+  max-width:520px;
+  background:rgba(15,23,42,.95);
+  border-radius:22px;
+  padding:24px 26px;
+  box-shadow:0 30px 80px rgba(0,0,0,.8);
+  animation:fadeUp .6s ease;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.header{
+  text-align:center;
+  margin-bottom:50px;
+}
+
+.header h2{
+  font-weight:600;
+  margin-bottom:4px;
+}
+
+.header p{
+  font-size:13px;
+  opacity:.75;
+}
+
+/* =====================
+   FORM
+===================== */
+label{
+  font-size:12px;
+  margin-top:12px;
+  display:block;
+  opacity:.9;
+}
+
+input, textarea, select{
+  width:100%;
+  margin-top:4px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+  font-size:14px;
+  background:#020617;
+  color:#e5e7eb;
+}
+
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+input:focus, textarea:focus, select:focus{
+  box-shadow:0 0 0 2px rgba(34,197,94,.6);
+}
+
+/* =====================
+   STAR RATING
+===================== */
+.stars{
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+}
+
+.star{
+  font-size:70px;
+  cursor:pointer;
+  color:#334155;
+  transition:.2s;
+}
+
+.star.active{
+  color:#facc15;
+  transform:scale(1.1);
+}
+
+/* =====================
+   BUTTON
+===================== */
+button{
+  width:100%;
+  margin-top:18px;
+  padding:12px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(135deg,#22c55e,#4ade80);
+  color:#022c22;
+  font-weight:600;
+  font-size:15px;
+  transition:.2s;
+}
+
+button:hover{
+  transform:scale(1.04);
+  box-shadow:0 0 30px rgba(34,197,94,.9);
+}
+
+.footer{
+  text-align:center;
+  font-size:11px;
+  opacity:.6;
+  margin-top:12px;
+}
+</style>
+</head>
+
+<body>
+
+    {% if messages %}
+  <div id="toast-container">
+    {% for message in messages %}
+      <div class="toast {{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<style>
+#toast-container{
+  position:fixed;
+  top:20px;
+  right:20px;
+  z-index:9999;
+}
+.toast{
+  background:#22c55e;
+  color:#022c22;
+  padding:12px 16px;
+  border-radius:12px;
+  margin-bottom:8px;
+  font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  animation:slideIn .4s ease, fadeOut .4s ease 3s forwards;
+}
+.toast.error{
+  background:#ef4444;
+  color:white;
+}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateX(30px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes fadeOut{
+  to{opacity:0;transform:translateX(30px)}
+}
+</style>
+
+
+<div class="card">
+  <div class="header">
+    <h2>📝 Feedback</h2>
+    <p>Your feedback helps improve SkillConnect</p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <label>Overall Rating</label>
+    <div class="stars" id="stars">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
+    </div>
+    <input type="hidden" name="rating" id="ratingInput" required>
+
+    <label>Feedback Category</label>
+    <select name="category" required>
+      <option value="">Select</option>
+      <option value="ui">UI / UX</option>
+      <option value="jobs">Jobs & Proposals</option>
+      <option value="chat">Chat & Communication</option>
+      <option value="payments">Payments</option>
+      <option value="other">Other</option>
+    </select>
+
+    <label>Your Feedback</label>
+    <textarea name="message" placeholder="Tell us what you liked or what can be improved..." required></textarea>
+
+    <button type="submit">Submit Feedback 🚀</button>
+  </form>
+
+  <div class="footer">
+    Thank you for helping us grow 💚
+  </div>
+</div>
+
+<script>
+const stars = document.querySelectorAll(".star");
+const ratingInput = document.getElementById("ratingInput");
+
+stars.forEach(star => {
+  star.addEventListener("click", () => {
+    const val = star.dataset.value;
+    ratingInput.value = val;
+
+    stars.forEach(s => {
+      s.classList.toggle("active", s.dataset.value <= val);
+    });
+  });
+});
+</script>
+
+</body>
+</html>
